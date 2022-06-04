@@ -1,11 +1,14 @@
 '''
-Using tutorial from:
+Using tutorials from:
 https://www.dataquest.io/blog/web-scraping-python-using-beautiful-soup/
+https://www.delftstack.com/howto/python/python-append-to-csv/
 '''
 
 # Importing relevant libraries
 import requests
 from bs4 import BeautifulSoup as bs
+from csv import DictWriter
+from datetime import datetime
 
 # Defining functions
 def remove_all(list, element):
@@ -35,24 +38,25 @@ if __name__ == '__main__':
     swellText = swell.get_text() # Extract text data
     swellSplit = swellText.split(' ')
     swellClean = swellSplit[4]
-    print(swellClean)
+    # print(swellClean)
 
     ### TIDE TIMES ###
     
     tideTime = []
     tideType = []
 
+    tidesToday = {}
+
     tide = soup.findAll(class_="table table-sm table-striped table-inverse table-tide")
     for t in tide[0]:
         tText = t.get_text()
         tSplit = tText.split(' ')
         tClean = remove_all(tSplit, '')
-        if len(tClean) == 3:
-            tideTime.append(tClean[1])
-            tideType.append(tClean[0])
 
-    tidesToday = {'type': tideType, 'time': tideTime}
-    print(tidesToday)
+        if len(tClean) == 3:
+            tidesToday[tClean[1]] = tClean[0], tClean[1]
+
+    # print(tidesToday)
 
     '''
     To obtain other information use function soup.findAll,
@@ -60,3 +64,19 @@ if __name__ == '__main__':
     then copy -> copy element,
     paste into argument of findAll and add an underscore to end of class.
     '''
+
+    ### WRITING TO CSV ###
+
+    now = datetime.now().strftime("%d/%m/%Y %H:%M")
+
+    csv_data = {'time': now, 'swell': swellClean}
+    csv_data.update(tidesToday)
+
+    headersCSV = list(csv_data.keys())
+
+    print(csv_data)
+
+    with open(r'C:\Users\Joe.Hensman\OneDrive - TTPGroup\Documents\Project Woolacombe\Code\wave_data.csv', 'a', newline='') as f_object:
+        dictwriter_object = DictWriter(f_object, fieldnames=headersCSV)
+        dictwriter_object.writerow(csv_data)
+        f_object.close()
