@@ -27,6 +27,7 @@ if __name__ == '__main__':
 
     # Obtaining the the html
     page = requests.get(url)
+
     # print(page) # will start with 2 if success, 4 or 5 is bad 
 
     # Makes it readable for python
