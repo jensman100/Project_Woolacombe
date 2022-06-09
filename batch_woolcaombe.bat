@@ -1,0 +1,1 @@
+C:\Users\Joe.Hensman\.virtualenvs\Code-Rxef89kF\Scripts\activate.bat && python C:\Users\JAH1\Documents\Project_Woolacombe\Magicseaweed_scraping.py

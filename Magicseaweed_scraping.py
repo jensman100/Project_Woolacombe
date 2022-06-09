@@ -77,7 +77,7 @@ if __name__ == '__main__':
 
     print(csv_data)
 
-    with open(r'C:\Users\Joe.Hensman\OneDrive - TTPGroup\Documents\Project Woolacombe\Code\wave_data.csv', 'a', newline='') as f_object:
+    with open(r'C:\Users\JAH1\Documents\Project_Woolacombe\wave_data.csv', 'a', newline='') as f_object:
         dictwriter_object = DictWriter(f_object, fieldnames=headersCSV)
         dictwriter_object.writerow(csv_data)
         f_object.close()
