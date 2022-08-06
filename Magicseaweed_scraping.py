@@ -31,6 +31,7 @@ if __name__ == '__main__':
 
     # Obtaining the the html
     page = requests.get(url)
+
     # print(page) # will start with 2 if success, 4 or 5 is bad 
 
     # Makes it readable for python
@@ -89,7 +90,7 @@ if __name__ == '__main__':
 
     print(csv_data)
 
-    with open(path_, 'w', newline='') as f_object:
+    with open(path_, 'a', newline='') as f_object:
         dictwriter_object = DictWriter(f_object, fieldnames=headersCSV)
         dictwriter_object.writerow(csv_data)
         f_object.close()
