@@ -9,6 +9,7 @@ import requests
 from bs4 import BeautifulSoup as bs
 from csv import DictWriter
 from datetime import datetime
+import platform
 
 # Defining functions
 def remove_all(list, element):
@@ -18,6 +19,9 @@ def remove_all(list, element):
         if e != element:
             l.append(e)
     return l
+
+def find_computer():
+    return platform.node()
 
 ### MAIN CODE ###
 if __name__ == '__main__':
@@ -38,7 +42,6 @@ if __name__ == '__main__':
     swellText = swell.get_text() # Extract text data
     swellSplit = swellText.split(' ')
     swellClean = swellSplit[4]
-    # print(swellClean)
 
     ### TIDE TIMES ###
     
@@ -56,8 +59,6 @@ if __name__ == '__main__':
         if len(tClean) == 3:
             tidesToday[tClean[1]] = tClean[0], tClean[1]
 
-    # print(tidesToday)
-
     '''
     To obtain other information use function soup.findAll,
     then right click on tag required when inspecting web page,
@@ -67,16 +68,30 @@ if __name__ == '__main__':
 
     ### WRITING TO CSV ###
 
+    computer = find_computer()
+    print(computer)
+    
+    # Tests what computer is being used so that it saves to the correct location
+    # Please add in location and computer if using a new device
+    # Can do this by running  platform.node()
+
+    if computer == 'LAPTOP-189M7RS5':
+        path_ = r"C:\Users\joeh2\OneDrive\Documents\Project Woolacombe\Code\wave_data.csv"
+    else:
+        raise Exception('Computer not recognised, please choose path for CSV save')
+
     now = datetime.now().strftime("%d/%m/%Y %H:%M")
 
-    csv_data = {'time': now, 'swell': swellClean}
+    csv_data = {'Time': now, 'Swell': swellClean}
     csv_data.update(tidesToday)
 
     headersCSV = list(csv_data.keys())
 
     print(csv_data)
 
-    with open(r'C:\Users\Joe.Hensman\OneDrive - TTPGroup\Documents\Project Woolacombe\Code\wave_data.csv', 'a', newline='') as f_object:
+    with open(path_, 'w', newline='') as f_object:
         dictwriter_object = DictWriter(f_object, fieldnames=headersCSV)
         dictwriter_object.writerow(csv_data)
         f_object.close()
+
+    print('Complete')
