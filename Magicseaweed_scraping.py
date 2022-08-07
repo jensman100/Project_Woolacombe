@@ -68,13 +68,12 @@ if __name__ == '__main__':
     '''
 
     ### WRITING TO CSV ###
-
-    computer = find_computer()
-    print(computer)
     
     # Tests what computer is being used so that it saves to the correct location
     # Please add in location and computer if using a new device
     # Can do this by running  platform.node()
+
+    computer = find_computer()
 
     if computer == 'LAPTOP-189M7RS5':
         path_ = r"C:\Users\joeh2\OneDrive\Documents\Project Woolacombe\Code\wave_data.csv"
