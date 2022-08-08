@@ -68,10 +68,6 @@ if __name__ == '__main__':
     '''
 
     ### WRITING TO CSV ###
-    
-    # Tests what computer is being used so that it saves to the correct location
-    # Please add in location and computer if using a new device
-    # Can do this by running  platform.node()
 
     computer = find_computer()
 
@@ -79,10 +75,17 @@ if __name__ == '__main__':
         path_ = r"C:\Users\joeh2\OneDrive\Documents\Project Woolacombe\Code\wave_data.csv"
     else:
         raise Exception('Computer not recognised, please choose path for CSV save')
+    
+    '''
+    Tests what computer is being used so that it saves to the correct location
+    Please add in location and computer if using a new device
+    Can do this by running platform.node() in python code
+    '''
+    
+    now_date = datetime.now().strftime("%d/%m/%Y")
+    now_time = datetime.now().strftime("%H:%M")
 
-    now = datetime.now().strftime("%d/%m/%Y %H:%M")
-
-    csv_data = {'Time': now, 'Swell': swellClean}
+    csv_data = {'Date': now_date,'Time': now_time, 'Swell': swellClean}
     csv_data.update(tidesToday)
 
     headersCSV = list(csv_data.keys())
