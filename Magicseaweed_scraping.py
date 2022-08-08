@@ -58,7 +58,7 @@ if __name__ == '__main__':
         tClean = remove_all(tSplit, '')
 
         if len(tClean) == 3:
-            tidesToday[tClean[1]] = tClean[0], tClean[1]
+            tidesToday[tClean[1]] = tClean[0]
 
     '''
     To obtain other information use function soup.findAll,
@@ -81,9 +81,22 @@ if __name__ == '__main__':
     Please add in location and computer if using a new device
     Can do this by running platform.node() in python code
     '''
-    
+
     now_date = datetime.now().strftime("%d/%m/%Y")
     now_time = datetime.now().strftime("%H:%M")
+
+
+    # Time until high/low tide
+
+    '''
+    Time is 24 hour, hh:mm -> need to split by colon to get hours and minutes
+    Tides is 12 hours hh:mmXM -> need to split by colon, look at [2] to change hours
+
+    Subtract Time from Tides, first positive number is going to be next
+    If none are positive then need to find first tide of next day 
+    
+    
+    '''
 
     csv_data = {'Date': now_date,'Time': now_time, 'Swell': swellClean}
     csv_data.update(tidesToday)
