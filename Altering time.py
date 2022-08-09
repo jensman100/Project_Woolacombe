@@ -9,8 +9,8 @@ If none are positive then need to find first tide of next day
 data = {'Date': '08/08/2022', 'Time': '11:06', 'Swell': '0-0.2m', '2:24AM': 'High', '8:45AM': 'Low', 
 '3:12PM': 'High', '9:26PM': 'Low'} 
 
-now_time = '00:00'
-tides_today = {'12:00AM': 'High', '12:00PM': 'Low', '3:12PM': 'High', '9:26PM': 'Low'}
+now_time = '11:06'
+tides_today = {'2:24AM': 'High', '8:45AM': 'Low', '3:12PM': 'High', '9:26PM': 'Low'}
 
 now_hours = int(now_time.split(':')[0])
 now_minutes = int(now_time.split(':')[1])
@@ -66,8 +66,23 @@ while not success:
 
     if hours >= 0:
         success = True
-        print(tide_times[count])
+
     else:
         count += 1
 
+# Returning when next tide will be
+tide_type = tides_today.get(tide_times[count])
+print('The time until the next {} tide is {} hours and {} minutes'.format(tide_type, hours, minutes))
 
+# Calculate percentage through tide, need to convert to minutes
+minutes_through_tide = 60 * hours + minutes
+
+minutes_next_tide = tide_hours * 60 + tide_minutes
+
+previous_hours = int(tide_times[count - 1].split(':')[0])
+previous_minutes = int(tide_times[count - 1].split(':')[1][0:2])
+minutes_previous_tide = 60 * previous_hours + previous_minutes
+
+fraction_through_tide = int(minutes_through_tide/ (minutes_next_tide - minutes_previous_tide))
+
+print("It is {} % through the tide".format(fraction_through_tide * 100))
