@@ -9,7 +9,7 @@ If none are positive then need to find first tide of next day
 data = {'Date': '08/08/2022', 'Time': '11:06', 'Swell': '0-0.2m', '2:24AM': 'High', '8:45AM': 'Low', 
 '3:12PM': 'High', '9:26PM': 'Low'} 
 
-now_time = '11:06'
+now_time = '2:06'
 tides_today = {'2:24AM': 'High', '8:45AM': 'Low', '3:12PM': 'High', '9:26PM': 'Low'}
 
 now_hours = int(now_time.split(':')[0])
@@ -40,6 +40,8 @@ print(tide_times_24)
 print(now_time)
 
 success = False
+start_of_day = False
+end_of_day = False
 count = 0
 
 while not success:
@@ -65,24 +67,39 @@ while not success:
         hours += -1
 
     if hours >= 0:
+        if count == 0: # If start of day then needs yesterday's data
+            start_of_day = True
+
         success = True
 
     else:
-        count += 1
+        if count < len(tide_times) - 1:
+            count += 1
+        else:
+            end_of_day = True # If end of day then needs tomorrow's data
+            break
 
 # Returning when next tide will be
-tide_type = tides_today.get(tide_times[count])
-print('The time until the next {} tide is {} hours and {} minutes'.format(tide_type, hours, minutes))
+if not end_of_day:
+    tide_type = tides_today.get(tide_times[count])
+    print('The time until the next {} tide is {} hours and {} minutes'.format(tide_type, hours, minutes))
+
+else:
+    print('The next tide will be tomorrow, need to update code...')
 
 # Calculate percentage through tide, need to convert to minutes
 minutes_through_tide = 60 * hours + minutes
 
 minutes_next_tide = tide_hours * 60 + tide_minutes
 
-previous_hours = int(tide_times[count - 1].split(':')[0])
-previous_minutes = int(tide_times[count - 1].split(':')[1][0:2])
-minutes_previous_tide = 60 * previous_hours + previous_minutes
+if not end_of_day and not start_of_day:
+    previous_hours = int(tide_times[count - 1].split(':')[0])
+    previous_minutes = int(tide_times[count - 1].split(':')[1][0:2])
+    minutes_previous_tide = 60 * previous_hours + previous_minutes
 
-fraction_through_tide = int(minutes_through_tide/ (minutes_next_tide - minutes_previous_tide))
+    fraction_through_tide = minutes_through_tide/ (minutes_next_tide - minutes_previous_tide)
 
-print("It is {} % through the tide".format(fraction_through_tide * 100))
+    print("It is {} % through the tide".format(fraction_through_tide * 100))
+
+else:
+    print('It is the start or the end of the day, code needs to be updated...')
