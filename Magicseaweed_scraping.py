@@ -72,9 +72,15 @@ if __name__ == '__main__':
     computer = find_computer()
 
     if computer == 'LAPTOP-189M7RS5':
-        path_ = r"C:\Users\joeh2\OneDrive\Documents\Project Woolacombe\Code\wave_data.csv"
+        path_ = r'C:\Users\joeh2\OneDrive\Documents\Project Woolacombe\Code'
+
+    elif computer == 'LL-6D7W8H2':
+        path_ = r'C:\Users\JAH1\Documents\Project_Woolacombe'
+
     else:
         raise Exception('Computer not recognised, please choose path for CSV save')
+
+    path_ += '\wave_data.csv'
     
     '''
     Tests what computer is being used so that it saves to the correct location

@@ -9,6 +9,7 @@ bs4 = "*"
 datetime = "*"
 
 [dev-packages]
+pyinstaller = "*"
 
 [requires]
 python_version = "3.7"
