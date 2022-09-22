@@ -6,100 +6,80 @@ Subtract Time from Tides, first positive number is going to be next
 If none are positive then need to find first tide of next day 
 '''
 
-data = {'Date': '08/08/2022', 'Time': '11:06', 'Swell': '0-0.2m', '2:24AM': 'High', '8:45AM': 'Low', 
-'3:12PM': 'High', '9:26PM': 'Low'} 
+### MADE UP DATA - WILL BE READ FROM CSV
 
-now_time = '2:06'
+now_time = '21:27'
 tides_today = {'2:24AM': 'High', '8:45AM': 'Low', '3:12PM': 'High', '9:26PM': 'Low'}
+
+
+### START OF CODE
 
 now_hours = int(now_time.split(':')[0])
 now_minutes = int(now_time.split(':')[1])
 
 tide_times = list(tides_today.keys())
-tide_hours = tide_times[0].split(':')[0] # Need to go through tide_times[x] for all x
-tide_minutes = tide_times[0].split(':')[1][0:2]
-tide_morn_aft = tide_times[0].split(':')[1][2] # If = P then need to add 12 to hour - unless 12 pm. Need to change 12 am as well
 tide_times_24 = []
+end_of_day = True                                               # Will change to False if an early tide is found
 
-for count in range(len(tide_times)):
-    tide_hours = int(tide_times[count].split(':')[0])
-    tide_minutes = int(tide_times[count].split(':')[1][0:2])
-    tide_morn_aft = tide_times[count].split(':')[1][2]
+for count, time in enumerate(tide_times):
 
-    if tide_morn_aft == 'A': # If morning need to test for 12 AM (midnight)
-        if tide_hours == 12:
+### CONVERTING TO 24 HOUR
+
+    tide_hours = int(tide_times[count].split(':')[0])           # Hours found infront of colon
+    tide_minutes = int(tide_times[count].split(':')[1][0:2])    # Minutes found after colon
+    tide_morn_aft = tide_times[count].split(':')[1][2]          # AM/PM determined by letter after minutes
+
+    if tide_morn_aft == 'A':                                     # If morning need to test for 12 AM (midnight)
+        if tide_hours == 12: 
             tide_hours = 00
     
-    else: # If afternoon
-        if not tide_hours == 12:
+    else:                                                       # If afternoon
+        if not tide_hours == 12:                                # Need to convert afternoon hours to 24 hour by adding 12
             tide_hours += 12
 
-    tide_times_24.append('{}:{}'.format(tide_hours, tide_minutes))
+### SUBTRACTING FROM TIME NOW
 
-print(tide_times_24)
-print(now_time)
-
-success = False
-start_of_day = False
-end_of_day = False
-count = 0
-
-while not success:
-    # Changing tide times to 24 hours
-    tide_hours = int(tide_times[count].split(':')[0]) 
-    tide_minutes = int(tide_times[count].split(':')[1][0:2])
-    tide_morn_aft = tide_times[count].split(':')[1][2]
-
-    if tide_morn_aft == 'A': # If morning need to test for 12 AM (midnight)
-        if tide_hours == 12:
-            tide_hours = 00
-    
-    else: # If afternoon
-        if not tide_hours == 12:
-            tide_hours += 12
-
-    # Subtracting time from tide time
     minutes = tide_minutes - now_minutes
     hours = tide_hours - now_hours
 
-    if minutes < 0:
-        minutes += 60 # Subract minutes from 60
-        hours += -1
+    if minutes < 0:                                             # If minutes have gone negative (need to take an hour off)
+        minutes += 60                                           # Subract minutes from 60
+        hours += -1                                             # Take an hour off
 
-    if hours >= 0:
-        if count == 0: # If start of day then needs yesterday's data
-            start_of_day = True
+    if hours >= 0:        
 
-        success = True
+        if count == 0:                                          # If before first tide of the day
+            now_minutes_since_midnight = 60 * now_hours + now_minutes
+            minutes_to_midnight = 1440 - (60 * (tide_hours - 6 + 24) + tide_minutes)
 
-    else:
-        if count < len(tide_times) - 1:
-            count += 1
+            fraction_through_tide = (minutes_to_midnight + now_minutes_since_midnight)/360
+            end_of_day = False
+            break
+            
         else:
-            end_of_day = True # If end of day then needs tomorrow's data
+            minutes_next_tide = 60 * tide_hours + tide_minutes
+            previous_hours = int(tide_times[count - 1].split(':')[0])
+            previous_minutes = int(tide_times[count - 1].split(':')[1][0:2])
+            minutes_previous_tide = 60 * previous_hours + previous_minutes
+
+            tide_length = minutes_next_tide - minutes_previous_tide
+
+            fraction_through_tide = (tide_length - (60 * hours + minutes))/ (tide_length)
+            end_of_day = False
             break
 
-# Returning when next tide will be
+
 if not end_of_day:
     tide_type = tides_today.get(tide_times[count])
     print('The time until the next {} tide is {} hours and {} minutes'.format(tide_type, hours, minutes))
 
 else:
-    print('The next tide will be tomorrow, need to update code...')
+    tide_type = tides_today.get(tide_times[count - 1])
+    print('The next tide is tomorrow it will be {}'.format(tide_type))
 
-# Calculate percentage through tide, need to convert to minutes
-minutes_through_tide = 60 * hours + minutes
+    total_now_minutes = 60 * now_hours + now_minutes
+    minutes_previous_tide = 60 * tide_hours + tide_minutes
 
-minutes_next_tide = tide_hours * 60 + tide_minutes
+    fraction_through_tide = (total_now_minutes - minutes_previous_tide)/ 360
 
-if not end_of_day and not start_of_day:
-    previous_hours = int(tide_times[count - 1].split(':')[0])
-    previous_minutes = int(tide_times[count - 1].split(':')[1][0:2])
-    minutes_previous_tide = 60 * previous_hours + previous_minutes
-
-    fraction_through_tide = minutes_through_tide/ (minutes_next_tide - minutes_previous_tide)
-
-    print("It is {} % through the tide".format(fraction_through_tide * 100))
-
-else:
-    print('It is the start or the end of the day, code needs to be updated...')
+print("It is {} % through the tide".format(fraction_through_tide * 100))
