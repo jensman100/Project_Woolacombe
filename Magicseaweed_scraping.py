@@ -30,7 +30,12 @@ if __name__ == '__main__':
     url = 'https://magicseaweed.com/Woolacombe-Surf-Report/1352/'
 
     # Obtaining the the html
-    page = requests.get(url)
+    try:
+        page = requests.get(url)
+
+    except:
+        raise Exception('Try connecting to the internet')
+
 
     # print(page) # will start with 2 if success, 4 or 5 is bad 
 
@@ -98,9 +103,7 @@ if __name__ == '__main__':
     Tides is 12 hours hh:mmXM -> need to split by colon, look at [2] to change hours
 
     Subtract Time from Tides, first positive number is going to be next
-    If none are positive then need to find first tide of next day 
-    
-    
+    If none are positive then need to find first tide of next day     
     '''
 
     csv_data = {'Date': now_date,'Time': now_time, 'Swell': swellClean}
